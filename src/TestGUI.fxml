@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml.FXMLController">
+   <children>
+      <BorderPane layoutX="-411.0" layoutY="-79.0" prefHeight="346.0" prefWidth="411.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <BorderPane prefHeight="25.0" prefWidth="411.0" BorderPane.alignment="TOP_CENTER">
+               <top>
+                  <HBox prefHeight="25.0" prefWidth="411.0" BorderPane.alignment="TOP_CENTER">
+                     <children>
+                        <MenuBar prefHeight="25.0" prefWidth="500.0" HBox.hgrow="ALWAYS">
+                          <menus>
+                            <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
+                              <items>
+                                <MenuItem fx:id="saveItem" mnemonicParsing="false" text="Save..." />
+                                    <MenuItem fx:id="loadItem" mnemonicParsing="false" text="Load..." />
+                              </items>
+                            </Menu>
+                            <Menu mnemonicParsing="false" text="Help">
+                              <items>
+                                <MenuItem fx:id="aboutItem" mnemonicParsing="false" onAction="#invokeAboutItem" text="About" />
+                              </items>
+                            </Menu>
+                          </menus>
+                        </MenuBar>
+                     </children>
+                  </HBox>
+               </top>
+               <bottom>
+                  <HBox prefHeight="50.0" prefWidth="500.0" BorderPane.alignment="BOTTOM_CENTER">
+                     <children>
+                        <DatePicker id="datePicker" fx:id="datePicker" editable="false" prefHeight="32.0" prefWidth="125.0" HBox.hgrow="ALWAYS">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <HBox.margin>
+                              <Insets left="187.0" top="10.0" />
+                           </HBox.margin>
+                        </DatePicker>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets />
+                     </BorderPane.margin>
+                  </HBox>
+               </bottom>
+            </BorderPane>
+         </top>
+         <center>
+            <TextArea fx:id="entryTextArea" prefHeight="200.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+            </TextArea>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

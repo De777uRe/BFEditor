@@ -1,5 +1,12 @@
 package application;
 	
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,10 +46,6 @@ public class Main extends Application {
 			// MAIN TOP
 			BorderPane bpTop = new BorderPane();
 			
-//			HBox toolPane = new HBox();
-//			toolPane.setPadding(new Insets(15, 12, 15, 12));
-//			toolPane.setSpacing(10);
-//            toolPane.setStyle("-fx-background-color: #669999;");
             MenuBar menuBar = new MenuBar();
             menuBar.setStyle("-fx-background-color: #669999;");
             Menu menuFile = new Menu("File");
@@ -52,10 +55,44 @@ public class Main extends Application {
                     System.out.println("Saving File");
                     FileChooser fileChooser = new FileChooser();
                     fileChooser.setTitle("Save Encrypted Journal");
-                    fileChooser.showOpenDialog(primaryStage);
+                    File savedFilePath = fileChooser.showSaveDialog(primaryStage);
+                    
+                    try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(savedFilePath))) {
+                        os.writeObject(entryMap);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    
+                    System.out.println("Saving to File: " + savedFilePath);
+                }
+            });
+            MenuItem menuLoad = new MenuItem("Load...");
+            menuLoad.setOnAction(new EventHandler<ActionEvent>() {
+                public void handle(ActionEvent t) {
+                    System.out.println("Loading File");
+                    FileChooser fileChooser = new FileChooser();
+                    fileChooser.setTitle("Load Encrypted Journal");
+                    File loadedFilePath = fileChooser.showOpenDialog(primaryStage);
+                    
+                    try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(loadedFilePath))) {
+                        entryMap = (Map<LocalDate, String>) is.readObject();
+                        // TODO Trigger Event
+                        textSpace.setText(entryMap.get(date));
+                    } catch (FileNotFoundException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (ClassNotFoundException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
             });
             menuFile.getItems().add(menuSave);
+            menuFile.getItems().add(menuLoad);
             menuBar.getMenus().add(menuFile);
             
             
@@ -63,10 +100,6 @@ public class Main extends Application {
             datePane.setPadding(new Insets(15, 12, 15, 12));
             datePane.setSpacing(10);
             datePane.setStyle("-fx-background-color: #00ccff;");
-//            TextArea dateSpace = new TextArea();
-//            dateSpace.setPrefHeight(datePane.getHeight());
-//            dateSpace.setPrefWidth(1000);
-//            datePane.getChildren().add(dateSpace);
             final DatePicker datePicker = new DatePicker();
             datePicker.setOnAction(new EventHandler<ActionEvent>() {
                 public void handle(ActionEvent t) {
@@ -79,7 +112,6 @@ public class Main extends Application {
             datePicker.setEditable(false);
             datePane.getChildren().add(datePicker);
             
-//		    bpTop.setTop(toolPane);
             bpTop.setTop(menuBar);
 		    bpTop.setBottom(datePane);
 
