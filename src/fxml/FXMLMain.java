@@ -10,6 +10,7 @@ public class FXMLMain extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Scene scene = new Scene(FXMLLoader.load(getClass().getResource("../TestGUI.fxml")), 500, 500);
+        primaryStage.setTitle("BFEditor");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
