@@ -18,7 +18,7 @@
                <top>
                   <HBox fx:id="menuHBox" prefHeight="25.0" prefWidth="411.0" BorderPane.alignment="TOP_CENTER">
                      <children>
-                        <MenuBar prefHeight="25.0" prefWidth="500.0" HBox.hgrow="ALWAYS">
+                        <MenuBar fx:id="bfMenu" prefHeight="25.0" prefWidth="500.0" HBox.hgrow="ALWAYS">
                           <menus>
                             <Menu fx:id="fileMenu" mnemonicParsing="false" onAction="#invokeFileMenu" text="File">
                               <items>
@@ -29,7 +29,9 @@
                               <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit">
                                 <items>
                                   <MenuItem fx:id="menuBarItem" mnemonicParsing="false" onAction="#invokeMenuBarItem" text="Menu Bar" />
-                                    <MenuItem fx:id="dateBarItem" mnemonicParsing="false" text="Date Bar" />
+                                    <MenuItem fx:id="dateBarItem" mnemonicParsing="false" onAction="#invokeDateBarItem" text="Date Bar" />
+                                    <MenuItem fx:id="datePickerItem" mnemonicParsing="false" onAction="#invokeDatePickerItem" text="Date Picker" />
+                                    <MenuItem fx:id="textAreaItem" mnemonicParsing="false" onAction="#invokeTextAreaItem" text="Text Area" />
                                 </items>
                               </Menu>
                             <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help">
@@ -43,7 +45,7 @@
                   </HBox>
                </top>
                <bottom>
-                  <HBox prefHeight="50.0" prefWidth="500.0" BorderPane.alignment="BOTTOM_CENTER">
+                  <HBox fx:id="dateHBox" prefHeight="50.0" prefWidth="500.0" BorderPane.alignment="BOTTOM_CENTER">
                      <children>
                         <DatePicker id="datePicker" fx:id="datePicker" editable="false" onAction="#invokeDatePicker" prefHeight="32.0" prefWidth="125.0" HBox.hgrow="ALWAYS">
                            <opaqueInsets>
