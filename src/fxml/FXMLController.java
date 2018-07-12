@@ -15,6 +15,7 @@ import java.util.Optional;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
@@ -33,6 +34,7 @@ import javafx.stage.Stage;
 public class FXMLController {
 	private LocalDate date = LocalDate.now();
 	private static Map<LocalDate, String> entryMap = new HashMap<LocalDate, String>();
+	
     
     @FXML
     private AnchorPane anchorPane;
@@ -138,61 +140,67 @@ public class FXMLController {
     private void invokeMenuBarItem() {
     	System.out.println("Invoked Edit -> Menu Bar Item");
     	
-    	ColorPicker colorChooser = new ColorPicker();
+    	genericColorPrompt("Color for Menu Bar", "-fx-background-color: #", bfMenu);
     	
-    	Alert dialog = new Alert(Alert.AlertType.NONE);
-    	dialog.initOwner((Stage) anchorPane.getScene().getWindow());
-    	dialog.setTitle("Color for Menu Bar");
-    	dialog.setResizable(true);
-    	dialog.getDialogPane().setContent(colorChooser);
-    	dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK);
-    	dialog.getDialogPane().setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-    	dialog.getDialogPane().setPrefHeight(90);
-    	dialog.getDialogPane().setPrefWidth(320);
-//    	bfMenu.setStyle("-fx-background-color: #2f4f4f;");
-//    	dateHBox.setStyle("-fx-background-color: #2f4f4f;");
-    	
-    	// USING CSS
-//    	anchorPane.getScene().getStylesheets().add(getClass().getResource("../application/application.css").toExternalForm());
-//    	menuHBox.getStyleClass().add("hbox");
-    	
-    	Optional<ButtonType> response = dialog.showAndWait();
-    	if (response.filter(r -> r == ButtonType.OK).isPresent()) {
-    		Color pickedColor = colorChooser.getValue();
-    		System.out.println("Picked color: " + colorToHex(pickedColor));
-    		bfMenu.setStyle("-fx-background-color: #" + colorToHex(pickedColor) + ";");
-    	}
+//    	ColorPicker colorChooser = new ColorPicker();
+//    	
+//    	Alert dialog = new Alert(Alert.AlertType.NONE);
+//    	dialog.initOwner((Stage) anchorPane.getScene().getWindow());
+//    	dialog.setTitle("Color for Menu Bar");
+//    	dialog.setResizable(true);
+//    	dialog.getDialogPane().setContent(colorChooser);
+//    	dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK);
+//    	dialog.getDialogPane().setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+//    	dialog.getDialogPane().setPrefHeight(90);
+//    	dialog.getDialogPane().setPrefWidth(320);
+////    	bfMenu.setStyle("-fx-background-color: #2f4f4f;");
+////    	dateHBox.setStyle("-fx-background-color: #2f4f4f;");
+//    	
+//    	// USING CSS
+////    	anchorPane.getScene().getStylesheets().add(getClass().getResource("../application/application.css").toExternalForm());
+////    	menuHBox.getStyleClass().add("hbox");
+//    	
+//    	Optional<ButtonType> response = dialog.showAndWait();
+//    	if (response.filter(r -> r == ButtonType.OK).isPresent()) {
+//    		Color pickedColor = colorChooser.getValue();
+//    		System.out.println("Picked color: " + colorToHex(pickedColor));
+//    		bfMenu.setStyle("-fx-background-color: #" + colorToHex(pickedColor) + ";");
+//    	}
     }
     
     @FXML
     private void invokeDateBarItem() {
         System.out.println("Invoked Edit -> Date Bar Item");
         
-        ColorPicker colorChooser = new ColorPicker();
+        genericColorPrompt("Color for Date Bar", "-fx-background-color: #", dateHBox);
         
-        Alert dialog = new Alert(Alert.AlertType.NONE);
-        dialog.initOwner((Stage) anchorPane.getScene().getWindow());
-        dialog.setTitle("Color for Date Bar");
-        dialog.setResizable(true);
-        dialog.getDialogPane().setContent(colorChooser);
-        dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK);
-        dialog.getDialogPane().setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        dialog.getDialogPane().setPrefHeight(90);
-        dialog.getDialogPane().setPrefWidth(320);
-        
-        Optional<ButtonType> response = dialog.showAndWait();
-        if (response.filter(r -> r == ButtonType.OK).isPresent()) {
-            Color pickedColor = colorChooser.getValue();
-            System.out.println("Picked color: " + colorToHex(pickedColor));
-            dateHBox.setStyle("-fx-background-color: #" + colorToHex(pickedColor) + ";");
-        }
+//        ColorPicker colorChooser = new ColorPicker();
+//        
+//        Alert dialog = new Alert(Alert.AlertType.NONE);
+//        dialog.initOwner((Stage) anchorPane.getScene().getWindow());
+//        dialog.setTitle("Color for Date Bar");
+//        dialog.setResizable(true);
+//        dialog.getDialogPane().setContent(colorChooser);
+//        dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK);
+//        dialog.getDialogPane().setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+//        dialog.getDialogPane().setPrefHeight(90);
+//        dialog.getDialogPane().setPrefWidth(320);
+//        
+//        Optional<ButtonType> response = dialog.showAndWait();
+//        if (response.filter(r -> r == ButtonType.OK).isPresent()) {
+//            Color pickedColor = colorChooser.getValue();
+//            System.out.println("Picked color: " + colorToHex(pickedColor));
+//            dateHBox.setStyle("-fx-background-color: #" + colorToHex(pickedColor) + ";");
+//        }
     }
     
     @FXML
     private void invokeDatePickerItem() {
         // TODO ONLY FILLS BORDER
-//        System.out.println("Invoked Edit -> Date Picker Item");
-//        
+        System.out.println("Invoked Edit -> Date Picker Item");
+        
+        genericColorPrompt("Color for Date Picker", "-fx-control-inner-background: #", datePicker);
+        
 //        ColorPicker colorChooser = new ColorPicker();
 //        
 //        Alert dialog = new Alert(Alert.AlertType.NONE);
@@ -209,15 +217,17 @@ public class FXMLController {
 //        if (response.filter(r -> r == ButtonType.OK).isPresent()) {
 //            Color pickedColor = colorChooser.getValue();
 //            System.out.println("Picked color: " + colorToHex(pickedColor));
-//            datePicker.setStyle("-fx-background-color: #" + colorToHex(pickedColor) + ";");
+//            datePicker.setStyle("-fx-control-inner-background: #" + colorToHex(pickedColor) + ";");
 //        }
     }
     
     @FXML
     private void invokeTextAreaItem() {
         // TODO ONLY FILLS BORDER
-//        System.out.println("Invoked Edit -> Text Area Item");
-//        
+        System.out.println("Invoked Edit -> Text Area Item");
+        
+        genericColorPrompt("Color for Text Area", "-fx-control-inner-background: #", entryTextArea);
+        
 //        ColorPicker colorChooser = new ColorPicker();
 //        
 //        Alert dialog = new Alert(Alert.AlertType.NONE);
@@ -234,8 +244,29 @@ public class FXMLController {
 //        if (response.filter(r -> r == ButtonType.OK).isPresent()) {
 //            Color pickedColor = colorChooser.getValue();
 //            System.out.println("Picked color: " + colorToHex(pickedColor));
-//            entryTextArea.setStyle("-fx-background-color: #" + colorToHex(pickedColor) + ";");
+//            entryTextArea.setStyle("-fx-control-inner-background: #" + colorToHex(pickedColor) + ";");
 //        }
+    }
+    
+    private void genericColorPrompt(String title, String cssString, Node target) {
+        ColorPicker colorChooser = new ColorPicker();
+        
+        Alert dialog = new Alert(Alert.AlertType.NONE);
+        dialog.initOwner((Stage) anchorPane.getScene().getWindow());
+        dialog.setTitle(title);
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(colorChooser);
+        dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK);
+        dialog.getDialogPane().setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        dialog.getDialogPane().setPrefHeight(90);
+        dialog.getDialogPane().setPrefWidth(320);
+        
+        Optional<ButtonType> response = dialog.showAndWait();
+        if (response.filter(r -> r == ButtonType.OK).isPresent()) {
+            Color pickedColor = colorChooser.getValue();
+            System.out.println("Picked color: " + colorToHex(pickedColor));
+            target.setStyle(cssString + colorToHex(pickedColor) + ";");
+        }
     }
     
     @FXML
