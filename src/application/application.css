@@ -6,3 +6,8 @@
     -fx-padding: 15;
     -fx-spacing: 10;
 }
+
+/* TEST FOR DATE PICKER BUTTON COLOR (DOESN'T WORK) */
+.date-picker > .arrow-button {
+    -fx-control-inner-background: #2f4f4f;
+}
