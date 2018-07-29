@@ -39,8 +39,10 @@ public class FXMLController {
 	private static Map<LocalDate, String> bfMenuColorMap = new HashMap<LocalDate, String>();
 	private static Map<LocalDate, String> dateHBoxColorMap = new HashMap<LocalDate, String>();
 	private static Map<LocalDate, String> datePickerColorMap = new HashMap<LocalDate, String>();
-	private static Map<LocalDate, String> entryTextAreaColorMap = new HashMap<LocalDate, String>(); 
-    
+	private static Map<LocalDate, String> entryTextAreaColorMap = new HashMap<LocalDate, String>();
+	
+	private String key;
+	
     @FXML
     private AnchorPane anchorPane;
     
@@ -114,7 +116,7 @@ public class FXMLController {
         System.out.println("Saving to File: " + savedFilePath);
     }
     
-    private void saveToFile(ObjectOutputStream os, Map<?, ?> ...maps) {
+    private void saveToFile(ObjectOutputStream os, Map<LocalDate, String> entryMap, Map<?, ?> ...maps) {
         for (Map<?, ?> map : maps) {
             try {
                 os.writeObject(map);
@@ -290,6 +292,11 @@ public class FXMLController {
             entryTextArea.setStyle("-fx-control-inner-background: #" + entryTextAreaColorMap.get(date));
         else
             entryTextArea.setStyle(null);
+    }
+    
+    public void setKey(String key) {
+        this.key = key;
+        System.out.println("KEY SET: " + key);
     }
     
     private String colorToHex(Color color) {
