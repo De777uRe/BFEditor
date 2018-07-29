@@ -5,10 +5,10 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.web.HTMLEditor?>
 
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml.FXMLController">
    <children>
@@ -64,7 +64,7 @@
             </BorderPane>
          </top>
          <center>
-            <TextArea fx:id="entryTextArea" prefHeight="200.0" prefWidth="200.0" wrapText="true" BorderPane.alignment="CENTER" />
+            <HTMLEditor fx:id="entryTextArea" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" onKeyReleased="#onKeyReleased" prefHeight="200.0" prefWidth="506.0" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
    </children>

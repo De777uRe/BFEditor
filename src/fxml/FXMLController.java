@@ -34,8 +34,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -45,12 +44,13 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
+import javafx.scene.web.HTMLEditor;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -67,6 +67,8 @@ public class FXMLController {
 	private static String key;
 	private Key aesKey;
 	private final byte salt[] = { 3, 25, (byte) 2017, 8, 19, (byte) 1996, 7, 7 };
+	
+	private EventHandler<MouseEvent> onMouseExitedHandler;
 	
     @FXML
     private AnchorPane anchorPane;
@@ -100,21 +102,41 @@ public class FXMLController {
     @FXML DatePicker datePicker;
     
     @FXML
-    private TextArea entryTextArea;
+    private HTMLEditor entryTextArea;
     
     @FXML
     public void initialize() {
-        entryTextArea.textProperty().addListener(new ChangeListener<String>() {
+//        entryTextArea.textProperty().addListener(new ChangeListener<String>() {
+//            @Override
+//            public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
+//                System.out.println("Entry changed from: \n" + oldValue + "\nto: \n" + newValue);
+//                entryMap.put(date, newValue);
+//            }
+//        });
+        
+        onMouseExitedHandler = new EventHandler<MouseEvent>() {
             @Override
-            public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
-                System.out.println("Entry changed from: \n" + oldValue + "\nto: \n" + newValue);
-                entryMap.put(date, newValue);
-//                Text containerText = new Text(entryTextArea.getText());
-//                containerText.setFill(Color.BLUE);
+            public void handle(MouseEvent event) {
+//                System.out.println(entryTextArea.getHtmlText());
+                entryMap.put(date, entryTextArea.getHtmlText());
             }
-        });
+        };
+        
+        for (Node node : entryTextArea.lookupAll("ToolBar")) {
+            node.setOnMouseExited(onMouseExitedHandler);
+        }
+        
+       anchorPane.setOnMouseExited(onMouseExitedHandler);
+       menuHBox.setOnMouseExited(onMouseExitedHandler);
+       dateHBox.setOnMouseExited(onMouseExitedHandler);
         
         datePicker.setValue(date);
+    }
+    
+    @FXML
+    private void onKeyReleased(KeyEvent ke) {
+//        System.out.println("ENTRY IS: " + entryTextArea.getHtmlText());
+        entryMap.put(date,  entryTextArea.getHtmlText());
     }
     
     @FXML
@@ -236,7 +258,7 @@ public class FXMLController {
                 // TODO Trigger Event
                 System.out.println("LOADING DATE: " + date);
                 datePicker.setValue(LocalDate.now());
-                entryTextArea.setText(entryMap.get(date));
+                entryTextArea.setHtmlText(entryMap.get(date));
                 if (bfMenuColorMap.get(date) != null)
                     bfMenu.setStyle("-fx-background-color: #" + bfMenuColorMap.get(date));
                 else
@@ -405,8 +427,9 @@ public class FXMLController {
     	
     	date = datePicker.getValue();
         System.out.println("Selected Date: " + date);
+        entryTextArea.setHtmlText("");
         
-        entryTextArea.setText(entryMap.get(date));
+        entryTextArea.setHtmlText(entryMap.get(date));
         
         if (bfMenuColorMap.get(date) != null)
             bfMenu.setStyle("-fx-background-color: #" + bfMenuColorMap.get(date));
