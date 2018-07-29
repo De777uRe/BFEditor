@@ -7,10 +7,32 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.AlgorithmParameters;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.InvalidParameterSpecException;
+import java.security.spec.KeySpec;
 import java.time.LocalDate;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -28,6 +50,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -41,7 +64,9 @@ public class FXMLController {
 	private static Map<LocalDate, String> datePickerColorMap = new HashMap<LocalDate, String>();
 	private static Map<LocalDate, String> entryTextAreaColorMap = new HashMap<LocalDate, String>();
 	
-	private String key;
+	private static String key;
+	private Key aesKey;
+	private final byte salt[] = { 3, 25, (byte) 2017, 8, 19, (byte) 1996, 7, 7 };
 	
     @FXML
     private AnchorPane anchorPane;
@@ -84,6 +109,8 @@ public class FXMLController {
             public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
                 System.out.println("Entry changed from: \n" + oldValue + "\nto: \n" + newValue);
                 entryMap.put(date, newValue);
+//                Text containerText = new Text(entryTextArea.getText());
+//                containerText.setFill(Color.BLUE);
             }
         });
         
@@ -126,6 +153,71 @@ public class FXMLController {
                 e.printStackTrace();
             }
         }
+        
+        try {
+            os.writeObject(encryptEntries(entryMap));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    private Map<LocalDate, Entry<byte[], byte[]>> encryptEntries(Map<LocalDate, String> entryMap) {
+        Map<LocalDate, Entry<byte[], byte[]>> encryptionMap = new HashMap<LocalDate, Entry<byte[], byte[]>>();
+        
+        Iterator<Entry<LocalDate, String>> it = entryMap.entrySet().iterator();
+        
+        while (it.hasNext()) {
+            Map.Entry<LocalDate, String> pair = (Map.Entry<LocalDate, String>)it.next();
+            System.out.println(pair.getKey() + " = " + pair.getValue());
+            Entry<byte[], byte[]> ivCipherEntry = encryptString(pair.getValue());
+            encryptionMap.put(pair.getKey(), ivCipherEntry);
+            it.remove();
+        }
+        
+        return encryptionMap;
+    }
+    
+    private Entry<byte[], byte[]> encryptString(String entry) {
+        Entry<byte[], byte[]> ivCipherEntry = null;
+        
+        try {
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+            KeySpec spec = new PBEKeySpec(key.toCharArray(), salt, 65536, 256);
+            SecretKey tmp = factory.generateSecret(spec);
+            SecretKey secret = new SecretKeySpec(tmp.getEncoded(), "AES");
+            
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, secret);
+            AlgorithmParameters params = cipher.getParameters();
+            byte[] iv = params.getParameterSpec(IvParameterSpec.class).getIV();
+            byte[] cipherText = cipher.doFinal(entry.getBytes("UTF-8"));
+            
+            ivCipherEntry = new SimpleEntry<byte[], byte[]>(iv, cipherText);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e2) {
+            // TODO Auto-generated catch block
+            e2.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvalidParameterSpecException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        return ivCipherEntry;
     }
     
     @FXML
@@ -177,8 +269,6 @@ public class FXMLController {
     private void populateSavedChanges(ObjectInputStream is) {
         try {
             // TODO Skipping bytes seems sloppy
-            entryMap = (Map<LocalDate, String>) is.readObject();
-            is.skip(8);
             bfMenuColorMap = (Map<LocalDate, String>) is.readObject();
             is.skip(8);
             dateHBoxColorMap = (Map<LocalDate, String>) is.readObject();
@@ -186,6 +276,51 @@ public class FXMLController {
             datePickerColorMap = (Map<LocalDate, String>) is.readObject();
             is.skip(8);
             entryTextAreaColorMap = (Map<LocalDate, String>) is.readObject();
+            is.skip(8);
+            
+            Map<LocalDate, Entry<byte[], byte[]>> loadedEntryMap = (Map<LocalDate, Entry<byte[], byte[]>>) is.readObject();
+            
+            Iterator<Entry<LocalDate, Entry<byte[], byte[]>>> it = loadedEntryMap.entrySet().iterator();
+            
+            while (it.hasNext()) {
+                Map.Entry<LocalDate, Entry<byte[], byte[]>> pair = it.next();
+                
+                try {
+                    SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+                    KeySpec spec = new PBEKeySpec(key.toCharArray(), salt, 65536, 256);
+                    SecretKey tmp = factory.generateSecret(spec);
+                    SecretKey secret = new SecretKeySpec(tmp.getEncoded(), "AES");
+                    
+                    Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+                    cipher.init(Cipher.DECRYPT_MODE, secret, new IvParameterSpec(pair.getValue().getKey()));
+                    String plaintext = new String(cipher.doFinal(pair.getValue().getValue()), "UTF-8");
+                    entryMap.put(pair.getKey(), plaintext);
+                    System.out.println("Plaintext: " + plaintext);
+                } catch (NoSuchAlgorithmException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (NoSuchPaddingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (InvalidKeySpecException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (InvalidKeyException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (InvalidAlgorithmParameterException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IllegalBlockSizeException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (BadPaddingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                
+                it.remove();
+            }
         } catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

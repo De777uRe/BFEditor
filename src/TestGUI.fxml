@@ -64,11 +64,7 @@
             </BorderPane>
          </top>
          <center>
-            <TextArea fx:id="entryTextArea" prefHeight="200.0" prefWidth="500.0" wrapText="true" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets />
-               </BorderPane.margin>
-            </TextArea>
+            <TextArea fx:id="entryTextArea" prefHeight="200.0" prefWidth="200.0" wrapText="true" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
    </children>
