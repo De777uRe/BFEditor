@@ -17,8 +17,9 @@ public class FXMLMain extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.load(getClass().getResource("../TestGUI.fxml").openStream());
-        Parent p = FXMLLoader.load(getClass().getResource("../TestGUI.fxml"));
+        fxmlLoader.load(getClass().getClassLoader().getResourceAsStream("TestGUI.fxml"));
+//        Parent p = fxmlLoader.load(getClass().getResourceAsStream("../TestGUI.fxml"));
+        Parent p = FXMLLoader.load(getClass().getClassLoader().getResource("TestGUI.fxml"));
         controller =  (FXMLController) fxmlLoader.getController();
         
         Scene scene = new Scene(p, 500, 500);

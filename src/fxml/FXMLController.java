@@ -186,8 +186,9 @@ public class FXMLController {
     
     private Map<LocalDate, Entry<byte[], byte[]>> encryptEntries(Map<LocalDate, String> entryMap) {
         Map<LocalDate, Entry<byte[], byte[]>> encryptionMap = new HashMap<LocalDate, Entry<byte[], byte[]>>();
+        Map<LocalDate, String> copyMap = new HashMap<LocalDate, String>(entryMap);
         
-        Iterator<Entry<LocalDate, String>> it = entryMap.entrySet().iterator();
+        Iterator<Entry<LocalDate, String>> it = copyMap.entrySet().iterator();
         
         while (it.hasNext()) {
             Map.Entry<LocalDate, String> pair = (Map.Entry<LocalDate, String>)it.next();
