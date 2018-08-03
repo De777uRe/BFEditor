@@ -23,7 +23,7 @@ public class FXMLMain extends Application {
         controller =  (FXMLController) fxmlLoader.getController();
         
         Scene scene = new Scene(p, 500, 500);
-        primaryStage.setTitle("BFEditor");
+        primaryStage.setTitle("BFJournal");
         primaryStage.setScene(scene);
         primaryStage.show();
         

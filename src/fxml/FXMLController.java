@@ -38,6 +38,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.DatePicker;
@@ -106,18 +107,9 @@ public class FXMLController {
     
     @FXML
     public void initialize() {
-//        entryTextArea.textProperty().addListener(new ChangeListener<String>() {
-//            @Override
-//            public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
-//                System.out.println("Entry changed from: \n" + oldValue + "\nto: \n" + newValue);
-//                entryMap.put(date, newValue);
-//            }
-//        });
-        
         onMouseExitedHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-//                System.out.println(entryTextArea.getHtmlText());
                 entryMap.put(date, entryTextArea.getHtmlText());
             }
         };
@@ -135,7 +127,6 @@ public class FXMLController {
     
     @FXML
     private void onKeyReleased(KeyEvent ke) {
-//        System.out.println("ENTRY IS: " + entryTextArea.getHtmlText());
         entryMap.put(date,  entryTextArea.getHtmlText());
     }
     
@@ -158,6 +149,7 @@ public class FXMLController {
                 saveToFile(os, entryMap, bfMenuColorMap, dateHBoxColorMap, datePickerColorMap, entryTextAreaColorMap);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
+                entryTextArea.setHtmlText("IOException caught in invokeSaveItem()\n" + e.getStackTrace());
                 e.printStackTrace();
             }
         }
@@ -172,6 +164,7 @@ public class FXMLController {
                 os.writeChars("\n");
             } catch (IOException e) {
                 // TODO Auto-generated catch block
+                entryTextArea.setHtmlText("IOException caught in saveToFile() map saves\n" + e.getStackTrace());
                 e.printStackTrace();
             }
         }
@@ -180,6 +173,7 @@ public class FXMLController {
             os.writeObject(encryptEntries(entryMap));
         } catch (IOException e) {
             // TODO Auto-generated catch block
+            entryTextArea.setHtmlText("IOException caught in invokeSaveItem() entryMap save\n" + e.getStackTrace());
             e.printStackTrace();
         }
     }
@@ -217,28 +211,39 @@ public class FXMLController {
             byte[] cipherText = cipher.doFinal(entry.getBytes("UTF-8"));
             
             ivCipherEntry = new SimpleEntry<byte[], byte[]>(iv, cipherText);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e2) {
+        } catch (NoSuchAlgorithmException e) {
             // TODO Auto-generated catch block
-            e2.printStackTrace();
+            entryTextArea.setHtmlText("NoSuchAlgorithmException caught in encryptString() from: " + entry + "\n" + e.getStackTrace());
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            // TODO Auto-generated catch block
+            entryTextArea.setHtmlText("InvalidKeySpecException caught in encryptString() from: " + entry + "\n" + e.getStackTrace());
+            e.printStackTrace();
         } catch (NoSuchPaddingException e) {
             // TODO Auto-generated catch block
+            entryTextArea.setHtmlText("NoSuchPaddingException caught in encryptString() from: " + entry + "\n" + e.getStackTrace());
             e.printStackTrace();
         } catch (InvalidKeyException e) {
             // TODO Auto-generated catch block
+            entryTextArea.setHtmlText("InvalidKeyException caught in encryptString() from: " + entry + "\n" + e.getStackTrace());
             e.printStackTrace();
         } catch (InvalidParameterSpecException e) {
             // TODO Auto-generated catch block
+            entryTextArea.setHtmlText("InvalidParameterSpecException caught in encryptString() from: " + entry + "\n" + e.getStackTrace());
             e.printStackTrace();
         } catch (IllegalBlockSizeException e) {
             // TODO Auto-generated catch block
+            entryTextArea.setHtmlText("IllegalBlockSizeException caught in encryptString() from: " + entry + "\n" + e.getStackTrace());
             e.printStackTrace();
         } catch (BadPaddingException e) {
             // TODO Auto-generated catch block
+            entryTextArea.setHtmlText("BadPaddingException caught in encryptString() from: " + entry + "\n" + e.getStackTrace());
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
+            entryTextArea.setHtmlText("UnsupportedEncodingException caught in encryptString() from: " + entry + "\n" + e.getStackTrace());
             e.printStackTrace();
-        }
+        } 
         
         return ivCipherEntry;
     }
@@ -281,9 +286,11 @@ public class FXMLController {
                     entryTextArea.setStyle(null);
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
+                entryTextArea.setHtmlText("FileNotFoundException caught in invokeLoadItem()" + "\n" + e.getStackTrace());
                 e.printStackTrace();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
+                entryTextArea.setHtmlText("IOException caught in invokeLoadItem()" + "\n" + e.getStackTrace());
                 e.printStackTrace();
             }
         }
@@ -321,24 +328,31 @@ public class FXMLController {
                     System.out.println("Plaintext: " + plaintext);
                 } catch (NoSuchAlgorithmException e) {
                     // TODO Auto-generated catch block
+                    entryTextArea.setHtmlText("NoSuchAlgorithmException caught in populateSavedChanges()\n" + e.getStackTrace());
                     e.printStackTrace();
                 } catch (NoSuchPaddingException e) {
                     // TODO Auto-generated catch block
+                    entryTextArea.setHtmlText("NoSuchPaddingException caught in populateSavedChanges()\n" + e.getStackTrace());
                     e.printStackTrace();
                 } catch (InvalidKeySpecException e) {
                     // TODO Auto-generated catch block
+                    entryTextArea.setHtmlText("InvalidKeySpecException caught in populateSavedChanges()\n" + e.getStackTrace());
                     e.printStackTrace();
                 } catch (InvalidKeyException e) {
                     // TODO Auto-generated catch block
+                    entryTextArea.setHtmlText("InvalidKeyException caught in populateSavedChanges()\n" + e.getStackTrace());
                     e.printStackTrace();
                 } catch (InvalidAlgorithmParameterException e) {
                     // TODO Auto-generated catch block
+                    entryTextArea.setHtmlText("InvalidAlgorithmParameterException caught in populateSavedChanges()\n" + e.getStackTrace());
                     e.printStackTrace();
                 } catch (IllegalBlockSizeException e) {
                     // TODO Auto-generated catch block
+                    entryTextArea.setHtmlText("IllegalBlockSizeException caught in populateSavedChanges()\n" + e.getStackTrace());
                     e.printStackTrace();
                 } catch (BadPaddingException e) {
                     // TODO Auto-generated catch block
+                    entryTextArea.setHtmlText("BadPaddingException caught in populateSavedChanges()\n" + e.getStackTrace());
                     e.printStackTrace();
                 }
                 
@@ -346,9 +360,11 @@ public class FXMLController {
             }
         } catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
+            entryTextArea.setHtmlText("ClassNotFoundException caught in populateSavedChanges()\n" + e.getStackTrace());
             e.printStackTrace();
         } catch (IOException e) {
             // TODO Auto-generated catch block
+            entryTextArea.setHtmlText("IOException caught in populateSavedChanges()\n" + e.getStackTrace());
             e.printStackTrace();
         }
     }
@@ -420,6 +436,11 @@ public class FXMLController {
     @FXML
     private void invokeAboutItem() {
         System.out.println("Invoked About Item");
+        
+        Alert alert = new Alert(AlertType.INFORMATION, "BFJournal Version 1.0", ButtonType.OK);
+        alert.setContentText("Your Personal Encrypted Journal");
+        alert.setTitle("About BFJournal");
+        alert.showAndWait();
     }
     
     @FXML
@@ -454,8 +475,17 @@ public class FXMLController {
     }
     
     public void setKey(String key) {
-        this.key = key;
-        System.out.println("KEY SET: " + key);
+        try {
+            byte[] keyBytes;
+            keyBytes = key.getBytes("UTF-8");
+            String encodedKey = new String(keyBytes, "UTF-8");
+            
+            this.key = encodedKey;
+            System.out.println("KEY SET: " + encodedKey);
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
     private String colorToHex(Color color) {
