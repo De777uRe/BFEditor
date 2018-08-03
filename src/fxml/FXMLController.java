@@ -438,7 +438,7 @@ public class FXMLController {
         System.out.println("Invoked About Item");
         
         Alert alert = new Alert(AlertType.INFORMATION, "BFJournal Version 1.0", ButtonType.OK);
-        alert.setContentText("Your Personal Encrypted Journal");
+        alert.setHeaderText("Your Personal Encrypted Journal");
         alert.setTitle("About BFJournal");
         alert.showAndWait();
     }
