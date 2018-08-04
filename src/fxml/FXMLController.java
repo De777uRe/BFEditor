@@ -419,7 +419,7 @@ public class FXMLController {
         dialog.getDialogPane().setContent(colorChooser);
         dialog.getDialogPane().getButtonTypes().setAll(ButtonType.OK);
         dialog.getDialogPane().setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        dialog.getDialogPane().setPrefHeight(90);
+        dialog.getDialogPane().setPrefHeight(110);
         dialog.getDialogPane().setPrefWidth(320);
         
         Optional<ButtonType> response = dialog.showAndWait();
@@ -437,7 +437,7 @@ public class FXMLController {
     private void invokeAboutItem() {
         System.out.println("Invoked About Item");
         
-        Alert alert = new Alert(AlertType.INFORMATION, "BFJournal Version 1.0", ButtonType.OK);
+        Alert alert = new Alert(AlertType.INFORMATION, "BFJournal Version 1.0.1", ButtonType.OK);
         alert.setHeaderText("Your Personal Encrypted Journal");
         alert.setTitle("About BFJournal");
         alert.showAndWait();
