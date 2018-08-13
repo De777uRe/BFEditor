@@ -2,12 +2,11 @@ package fxml;
 
 import java.util.Optional;
 
+import application.PasswordDialog;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TextInputDialog;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class FXMLMain extends Application {
@@ -27,20 +26,9 @@ public class FXMLMain extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         
-        final Stage keyDialogStage = new Stage();
-        keyDialogStage.initModality(Modality.APPLICATION_MODAL);
-        keyDialogStage.initOwner(scene.getWindow());
-        
-        TextInputDialog keyDialog = new TextInputDialog();
-        keyDialog.setTitle("Journal Key Input");
-        keyDialog.setHeaderText("The Key Entered Here Will Be Used for Encryption");
-        keyDialog.setContentText("Desired Key: ");
-        
-        Optional<String> keyResult = keyDialog.showAndWait();
-        
-        if (keyResult.isPresent()) {
-            controller.setKey(keyResult.get());
-        }
+        PasswordDialog pd = new PasswordDialog();
+        Optional<String> result = pd.showAndWait();
+        result.ifPresent(password -> controller.setKey(password));
     }
 
     public static void main(String[] args) {

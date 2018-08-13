@@ -90,6 +90,10 @@ public class FXMLController {
     private Menu helpMenu;
     
     @FXML
+    private MenuItem saveItem;
+    @FXML
+    private MenuItem loadItem;
+    @FXML
     private MenuItem menuBarItem;
     @FXML
     private MenuItem dateBarItem;
