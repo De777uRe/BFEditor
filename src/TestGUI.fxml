@@ -37,6 +37,7 @@
                             <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help">
                               <items>
                                 <MenuItem fx:id="aboutItem" mnemonicParsing="false" onAction="#invokeAboutItem" text="About" />
+                                    <MenuItem mnemonicParsing="false" onAction="#invokeHistoryItem" text="History" />
                               </items>
                             </Menu>
                           </menus>

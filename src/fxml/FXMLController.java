@@ -34,13 +34,16 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -48,9 +51,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -68,6 +75,7 @@ public class FXMLController {
 	private static String key;
 	private Key aesKey;
 	private final byte salt[] = { 3, 25, (byte) 2017, 8, 19, (byte) 1996, 7, 7 };
+	private final Background markedBackground = new Background(new BackgroundFill(Color.rgb(0x00, 0x00, 0x00), CornerRadii.EMPTY, Insets.EMPTY));
 	
 	private EventHandler<MouseEvent> onMouseExitedHandler;
 	
@@ -118,6 +126,34 @@ public class FXMLController {
             }
         };
         
+        datePicker.setDayCellFactory(dp -> new DateCell() {
+            {
+                addEventHandler(MouseEvent.MOUSE_EXITED, evt -> {
+                    if (entryMap.get(getItem()) != null) {
+                        if (!entryMap.get(getItem()).contains("<body contenteditable=\"true\"></body>"))
+                            Platform.runLater(() -> {
+                                System.out.println("EVENT HANDLER SETTING BACKGROUND");
+//                                setBackground(markedBackground);
+//                                setStyle("-fx-text-fill: #FFFF");
+                            });
+                    }
+                });
+            }
+
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (!empty && entryMap.get(item) != null) {
+                    if (!entryMap.get(item).contains("<body contenteditable=\"true\"></body>")) {
+                        System.out.println("UPDATE ITEM SETTING BACKGROUND");
+                        setBackground(markedBackground);
+                        setStyle("-fx-text-fill: #FFFF");
+                    }
+                }
+            }
+        });
+        
         for (Node node : entryTextArea.lookupAll("ToolBar")) {
             node.setOnMouseExited(onMouseExitedHandler);
         }
@@ -131,7 +167,7 @@ public class FXMLController {
     
     @FXML
     private void onKeyReleased(KeyEvent ke) {
-        entryMap.put(date,  entryTextArea.getHtmlText());
+        entryMap.put(date, entryTextArea.getHtmlText());
     }
     
     @FXML
@@ -441,9 +477,34 @@ public class FXMLController {
     private void invokeAboutItem() {
         System.out.println("Invoked About Item");
         
-        Alert alert = new Alert(AlertType.INFORMATION, "BFJournal Version 1.0.1", ButtonType.OK);
+        Alert alert = new Alert(AlertType.INFORMATION, "BFJournal Version 1.0.2", ButtonType.OK);
         alert.setHeaderText("Your Personal Encrypted Journal");
         alert.setTitle("About BFJournal");
+        alert.showAndWait();
+    }
+    
+    @FXML
+    private void invokeHistoryItem() {
+        Alert alert = new Alert(AlertType.INFORMATION, "Changelog", ButtonType.OK);
+        alert.setHeaderText("Version History");
+        alert.setTitle("Changelog");
+        alert.setContentText("Version 1.0.2 \n" +
+                             "Added Custom Icon \n" +
+                             "Added Password Dialog (Hidden Password Entry) \n" +
+                             "Added Changelog \n" +
+                             "***************************************************\n\n" +
+                             "Version 1.0.1 \n" +
+                             "Conversion from TextArea to HTMLEditory for Formatting Options \n" +
+                             "Fixed Bug that Caused Saved Entries to be Deleted in Current Session \n" +
+                             "Added About Section \n" +
+                             "Fixed Custom Color Window Size for Mac \n" +
+                             "***************************************************\n\n" +
+                             "Version 1.0.0 \n" +
+                             "Created Initial GUI \n" +
+                             "Ported to SceneBuilder \n" +
+                             "File Menu and Date Bar Colors Are Editable \n" +
+                             "Added Ability to Save Colors \n" +
+                             "Implemented Encryption/Decryption \n");
         alert.showAndWait();
     }
     
