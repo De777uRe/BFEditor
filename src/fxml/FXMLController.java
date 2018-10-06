@@ -34,7 +34,6 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -57,10 +56,10 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class FXMLController {
 	private LocalDate date = LocalDate.now();
@@ -69,13 +68,19 @@ public class FXMLController {
 	private static Map<LocalDate, String> entryMap = new HashMap<LocalDate, String>();
 	private static Map<LocalDate, String> bfMenuColorMap = new HashMap<LocalDate, String>();
 	private static Map<LocalDate, String> dateHBoxColorMap = new HashMap<LocalDate, String>();
+	// TODO This is not actually a color map
 	private static Map<LocalDate, String> datePickerColorMap = new HashMap<LocalDate, String>();
 	private static Map<LocalDate, String> entryTextAreaColorMap = new HashMap<LocalDate, String>();
 	
 	private static String key;
 	private Key aesKey;
 	private final byte salt[] = { 3, 25, (byte) 2017, 8, 19, (byte) 1996, 7, 7 };
+	
 	private final Background markedBackground = new Background(new BackgroundFill(Color.rgb(0x00, 0x00, 0x00), CornerRadii.EMPTY, Insets.EMPTY));
+	private final Background currentDayBackground = new Background(new BackgroundFill(Color.rgb(75, 90, 90), CornerRadii.EMPTY, Insets.EMPTY));
+	private String currentDayStyle = "-fx-text-fill: " + "#FFFFFF";
+	private Background defaultBackground;
+	private String defaultStyle;
 	
 	private EventHandler<MouseEvent> onMouseExitedHandler;
 	
@@ -126,33 +131,73 @@ public class FXMLController {
             }
         };
         
-        datePicker.setDayCellFactory(dp -> new DateCell() {
-            {
-                addEventHandler(MouseEvent.MOUSE_EXITED, evt -> {
-                    if (entryMap.get(getItem()) != null) {
-                        if (!entryMap.get(getItem()).contains("<body contenteditable=\"true\"></body>"))
-                            Platform.runLater(() -> {
-                                System.out.println("EVENT HANDLER SETTING BACKGROUND");
-//                                setBackground(markedBackground);
-//                                setStyle("-fx-text-fill: #FFFF");
-                            });
-                    }
-                });
-            }
-
+        defaultBackground = datePicker.getBackground();
+        defaultStyle = datePicker.getStyle();
+        
+        final Callback<DatePicker, DateCell> dayCellFactory = 
+                new Callback<DatePicker, DateCell>() {
             @Override
-            public void updateItem(LocalDate item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (!empty && entryMap.get(item) != null) {
-                    if (!entryMap.get(item).contains("<body contenteditable=\"true\"></body>")) {
-                        System.out.println("UPDATE ITEM SETTING BACKGROUND");
-                        setBackground(markedBackground);
-                        setStyle("-fx-text-fill: #FFFF");
+            public DateCell call(final DatePicker datePicker) {
+                return new DateCell() {
+                    @Override
+                    public void updateItem(LocalDate item, boolean empty) {
+                        super.updateItem(item, empty);
+                        
+                        if (entryMap.containsKey(item) && !entryMap.get(getItem()).contains("<body contenteditable=\"true\"></body>")) {
+                          setBackground(markedBackground);
+                          setStyle("-fx-text-fill: #FFFF");
+                        }
+                        else {
+                            setBackground(defaultBackground);
+                            setStyle(defaultStyle);
+                        }
+                        
+                        if (item.equals(datePicker.getValue())) {
+                            System.out.println("FOUND CURRENT DAY");
+                            setBackground(currentDayBackground);
+                            setStyle(currentDayStyle);
+                        }
                     }
-                }
+                };
             }
-        });
+        };
+        
+        datePicker.setDayCellFactory(dayCellFactory);
+        
+//        datePicker.setDayCellFactory(dp -> new DateCell() {
+//            {
+//                addEventHandler(MouseEvent.MOUSE_EXITED, evt -> {
+//                    if (entryMap.get(getItem()) != null) {
+//                        if (!entryMap.get(getItem()).contains("<body contenteditable=\"true\"></body>"))
+//                            Platform.runLater(() -> {
+//                                System.out.println("EVENT HANDLER SETTING BACKGROUND");
+////                                setBackground(markedBackground);
+////                                setStyle("-fx-text-fill: #FFFF");
+//                            });
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void updateItem(LocalDate item, boolean empty) {
+//                super.updateItem(item, empty);
+//                
+//                System.out.println("Called update item on date: " + DayOfWeek.from(item));
+//
+//                if (!empty && entryMap.get(item) != null) {
+//                    if (!entryMap.get(item).contains("<body contenteditable=\"true\"></body>")) {
+//                        System.out.println("UPDATE ITEM SETTING BACKGROUND");
+//                        setBackground(markedBackground);
+//                        setStyle("-fx-text-fill: #FFFF");
+//                    }
+//                    else {
+//                        System.out.println("UPDATE ITEM SETTING DEFAULT BACKGROUND");
+//                        setBackground(defaultBackground);
+//                        setStyle(defaultStyle);
+//                    }
+//                }
+//            }
+//        });
         
         for (Node node : entryTextArea.lookupAll("ToolBar")) {
             node.setOnMouseExited(onMouseExitedHandler);
