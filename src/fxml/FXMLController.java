@@ -16,7 +16,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
 import java.security.spec.KeySpec;
+import java.text.DateFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,6 +47,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -91,6 +95,11 @@ public class FXMLController {
     private HBox menuHBox;
     @FXML
     private HBox dateHBox;
+    
+    @FXML
+    private Label logLabel;
+    @FXML
+    private Label lastUpdatedLabel;
     
     @FXML
     private MenuBar bfMenu;
@@ -143,9 +152,11 @@ public class FXMLController {
                     public void updateItem(LocalDate item, boolean empty) {
                         super.updateItem(item, empty);
                         
+                        System.out.println("CALLING UPDATE ITEM");
+                        
                         if (entryMap.containsKey(item) && !entryMap.get(getItem()).contains("<body contenteditable=\"true\"></body>")) {
                           setBackground(markedBackground);
-                          setStyle("-fx-text-fill: #FFFF");
+                          setStyle("-fx-text-fill: white");
                         }
                         else {
                             setBackground(defaultBackground);
@@ -153,7 +164,6 @@ public class FXMLController {
                         }
                         
                         if (item.equals(datePicker.getValue())) {
-                            System.out.println("FOUND CURRENT DAY");
                             setBackground(currentDayBackground);
                             setStyle(currentDayStyle);
                         }
@@ -164,41 +174,6 @@ public class FXMLController {
         
         datePicker.setDayCellFactory(dayCellFactory);
         
-//        datePicker.setDayCellFactory(dp -> new DateCell() {
-//            {
-//                addEventHandler(MouseEvent.MOUSE_EXITED, evt -> {
-//                    if (entryMap.get(getItem()) != null) {
-//                        if (!entryMap.get(getItem()).contains("<body contenteditable=\"true\"></body>"))
-//                            Platform.runLater(() -> {
-//                                System.out.println("EVENT HANDLER SETTING BACKGROUND");
-////                                setBackground(markedBackground);
-////                                setStyle("-fx-text-fill: #FFFF");
-//                            });
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void updateItem(LocalDate item, boolean empty) {
-//                super.updateItem(item, empty);
-//                
-//                System.out.println("Called update item on date: " + DayOfWeek.from(item));
-//
-//                if (!empty && entryMap.get(item) != null) {
-//                    if (!entryMap.get(item).contains("<body contenteditable=\"true\"></body>")) {
-//                        System.out.println("UPDATE ITEM SETTING BACKGROUND");
-//                        setBackground(markedBackground);
-//                        setStyle("-fx-text-fill: #FFFF");
-//                    }
-//                    else {
-//                        System.out.println("UPDATE ITEM SETTING DEFAULT BACKGROUND");
-//                        setBackground(defaultBackground);
-//                        setStyle(defaultStyle);
-//                    }
-//                }
-//            }
-//        });
-        
         for (Node node : entryTextArea.lookupAll("ToolBar")) {
             node.setOnMouseExited(onMouseExitedHandler);
         }
@@ -207,12 +182,20 @@ public class FXMLController {
        menuHBox.setOnMouseExited(onMouseExitedHandler);
        dateHBox.setOnMouseExited(onMouseExitedHandler);
         
-        datePicker.setValue(date);
+       datePicker.setValue(date);
+       logLabel.setText("");
     }
     
     @FXML
     private void onKeyReleased(KeyEvent ke) {
         entryMap.put(date, entryTextArea.getHtmlText());
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("LLLL-dd-yyyy");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("hh:mm a");
+        logLabel.setText(LocalDate.now().format(df).toString() + " " + LocalTime.now().format(dtf).toString());
+        if(logLabel.getText() != "")
+        {
+            lastUpdatedLabel.setText("Last Updated:");
+        }
     }
     
     @FXML
@@ -360,10 +343,16 @@ public class FXMLController {
                 else
                     dateHBox.setStyle(null);
                 
-                if (datePickerColorMap.get(date) != null)
+                if (datePickerColorMap.get(date) != null) {
+                    System.out.println("Loading a style from file");
                     datePicker.setStyle("-fx-control-inner-background: #" + datePickerColorMap.get(date));
-                else
+//                    datePicker.getDayCellFactory().call(datePicker);
+                }
+                else {
                     datePicker.setStyle(null);
+                    datePicker.setBackground(defaultBackground);
+                    datePicker.setStyle(defaultStyle);
+                }
                 
                 if (entryTextAreaColorMap.get(date) != null)
                     entryTextArea.setStyle("-fx-control-inner-background: #" + entryTextAreaColorMap.get(date));
@@ -573,10 +562,24 @@ public class FXMLController {
         else
             dateHBox.setStyle(null);
         
-        if (datePickerColorMap.get(date) != null)
+        if (datePickerColorMap.get(date) != null) {
+            System.out.println("Loading a style from file");
             datePicker.setStyle("-fx-control-inner-background: #" + datePickerColorMap.get(date));
-        else
+            datePicker.getDayCellFactory().call(datePicker);
+        }
+        else {
             datePicker.setStyle(null);
+            datePicker.setBackground(defaultBackground);
+            datePicker.setStyle(defaultStyle);
+        }
+        
+//        if (datePickerColorMap.get(date) != null) {
+//            System.out.println("Setting style from datepicker");
+//            datePicker.setStyle("-fx-control-inner-background: #" + datePickerColorMap.get(date));
+//        }
+//        else {
+//            datePicker.setStyle(null);
+//        }
         
         if (entryTextAreaColorMap.get(date) != null)
             entryTextArea.setStyle("-fx-control-inner-background: #" + entryTextAreaColorMap.get(date));

@@ -2,12 +2,14 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.HTMLEditor?>
 
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml.FXMLController">
@@ -56,6 +58,18 @@
                               <Insets left="187.0" top="10.0" />
                            </HBox.margin>
                         </DatePicker>
+                        <VBox alignment="BOTTOM_CENTER" prefHeight="50.0" prefWidth="116.0">
+                           <children>
+                              <Label fx:id="lastUpdatedLabel" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="89.0" VBox.vgrow="ALWAYS" />
+                              <Label fx:id="logLabel" text="Label" />
+                           </children>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="50.0" top="10.0" />
+                           </HBox.margin>
+                        </VBox>
                      </children>
                      <BorderPane.margin>
                         <Insets />
