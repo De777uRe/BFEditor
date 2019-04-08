@@ -85,6 +85,7 @@ public class FXMLController {
 	private String currentDayStyle = "-fx-text-fill: " + "#FFFFFF";
 	private Background defaultBackground;
 	private String defaultStyle;
+	private File defaultSavePath;
 	
 	private EventHandler<MouseEvent> onMouseExitedHandler;
 	
@@ -113,6 +114,8 @@ public class FXMLController {
     
     @FXML
     private MenuItem saveItem;
+    @FXML
+    private MenuItem saveAsItem;
     @FXML
     private MenuItem loadItem;
     @FXML
@@ -190,7 +193,7 @@ public class FXMLController {
     private void onKeyReleased(KeyEvent ke) {
         entryMap.put(date, entryTextArea.getHtmlText());
         DateTimeFormatter df = DateTimeFormatter.ofPattern("LLLL-dd-yyyy");
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("hh:mm a");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("hh:mm:s a");
         logLabel.setText(LocalDate.now().format(df).toString() + " " + LocalTime.now().format(dtf).toString());
         if(logLabel.getText() != "")
         {
@@ -207,6 +210,25 @@ public class FXMLController {
     private void invokeSaveItem() {
     	System.out.println("Invoked Save Item");
     	
+        System.out.println("Overwriting Save File");
+        
+        if (defaultSavePath != null) {
+            try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(defaultSavePath))) {
+                saveToFile(os, entryMap, bfMenuColorMap, dateHBoxColorMap, datePickerColorMap, entryTextAreaColorMap);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                entryTextArea.setHtmlText("IOException caught in invokeSaveItem()\n" + e.getStackTrace());
+                e.printStackTrace();
+            }
+        }
+        
+        System.out.println("Overwriting File: " + defaultSavePath);
+    }
+    
+    @FXML
+    private void invokeSaveAsItem() {
+        System.out.println("Invoked Save As Item");
+        
         System.out.println("Saving File");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Encrypted Journal");
@@ -217,7 +239,7 @@ public class FXMLController {
                 saveToFile(os, entryMap, bfMenuColorMap, dateHBoxColorMap, datePickerColorMap, entryTextAreaColorMap);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
-                entryTextArea.setHtmlText("IOException caught in invokeSaveItem()\n" + e.getStackTrace());
+                entryTextArea.setHtmlText("IOException caught in invokeSaveAsItem()\n" + e.getStackTrace());
                 e.printStackTrace();
             }
         }
@@ -358,6 +380,7 @@ public class FXMLController {
                     entryTextArea.setStyle("-fx-control-inner-background: #" + entryTextAreaColorMap.get(date));
                 else
                     entryTextArea.setStyle(null);
+                defaultSavePath = loadedFilePath;
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
                 entryTextArea.setHtmlText("FileNotFoundException caught in invokeLoadItem()" + "\n" + e.getStackTrace());

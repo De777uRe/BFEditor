@@ -25,6 +25,7 @@
                             <Menu fx:id="fileMenu" mnemonicParsing="false" onAction="#invokeFileMenu" text="File">
                               <items>
                                 <MenuItem fx:id="saveItem" mnemonicParsing="false" onAction="#invokeSaveItem" text="Save..." />
+                                    <MenuItem fx:id="saveAsItem" mnemonicParsing="false" onAction="#invokeSaveAsItem" text="Save As..." />
                                     <MenuItem fx:id="loadItem" mnemonicParsing="false" onAction="#invokeLoadItem" text="Load..." />
                               </items>
                             </Menu>
@@ -61,7 +62,7 @@
                         <VBox alignment="BOTTOM_CENTER" prefHeight="50.0" prefWidth="116.0">
                            <children>
                               <Label fx:id="lastUpdatedLabel" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="89.0" VBox.vgrow="ALWAYS" />
-                              <Label fx:id="logLabel" text="Label" />
+                              <Label fx:id="logLabel" maxWidth="-Infinity" minWidth="-Infinity" text="Label" />
                            </children>
                            <opaqueInsets>
                               <Insets />
