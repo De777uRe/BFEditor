@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import application.PasswordDialog;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -24,11 +26,11 @@ public class FXMLMain extends Application {
         
         primaryStage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("BFIcon.png")));
         
-        Scene scene = new Scene(p, 500, 500);
+        Scene scene = new Scene(p, 750, 500);
         primaryStage.setTitle("BFJournal");
         primaryStage.setScene(scene);
         primaryStage.show();
-        
+
         PasswordDialog pd = new PasswordDialog();
         Optional<String> result = pd.showAndWait();
         result.ifPresent(password -> controller.setKey(password));

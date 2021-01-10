@@ -37,6 +37,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -53,14 +54,10 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.web.HTMLEditor;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -96,6 +93,8 @@ public class FXMLController {
     private HBox menuHBox;
     @FXML
     private HBox dateHBox;
+    @FXML
+    private VBox textAreaVBox;
     
     @FXML
     private Label logLabel;
@@ -184,11 +183,14 @@ public class FXMLController {
        anchorPane.setOnMouseExited(onMouseExitedHandler);
        menuHBox.setOnMouseExited(onMouseExitedHandler);
        dateHBox.setOnMouseExited(onMouseExitedHandler);
-        
+
        datePicker.setValue(date);
        logLabel.setText("");
+
+        WebView webview = (WebView) entryTextArea.lookup("WebView");
+        GridPane.setVgrow(webview, Priority.ALWAYS);
     }
-    
+
     @FXML
     private void onKeyReleased(KeyEvent ke) {
         entryMap.put(date, entryTextArea.getHtmlText());
@@ -199,6 +201,9 @@ public class FXMLController {
         {
             lastUpdatedLabel.setText("Last Updated:");
         }
+
+//        WebView webview = (WebView) entryTextArea.lookup("WebView");
+//        GridPane.setVgrow(webview, Priority.ALWAYS);
     }
     
     @FXML
@@ -551,7 +556,7 @@ public class FXMLController {
                              "Added Changelog \n" +
                              "***************************************************\n\n" +
                              "Version 1.0.1 \n" +
-                             "Conversion from TextArea to HTMLEditory for Formatting Options \n" +
+                             "Conversion from TextArea to HTMLEditor for Formatting Options \n" +
                              "Fixed Bug that Caused Saved Entries to be Deleted in Current Session \n" +
                              "Added About Section \n" +
                              "Fixed Custom Color Window Size for Mac \n" +

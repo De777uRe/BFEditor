@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.HTMLEditor?>
 
@@ -51,12 +52,13 @@
                <bottom>
                   <HBox fx:id="dateHBox" prefHeight="50.0" prefWidth="500.0" BorderPane.alignment="BOTTOM_CENTER">
                      <children>
+                        <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />
                         <DatePicker id="datePicker" fx:id="datePicker" editable="false" onAction="#invokeDatePicker" prefHeight="32.0" prefWidth="125.0" HBox.hgrow="ALWAYS">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
                            <HBox.margin>
-                              <Insets left="187.0" top="10.0" />
+                              <Insets top="10.0" />
                            </HBox.margin>
                         </DatePicker>
                         <VBox alignment="BOTTOM_CENTER" prefHeight="50.0" prefWidth="116.0">
@@ -71,6 +73,7 @@
                               <Insets bottom="10.0" left="50.0" top="10.0" />
                            </HBox.margin>
                         </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />
                      </children>
                      <BorderPane.margin>
                         <Insets />
@@ -80,8 +83,11 @@
             </BorderPane>
          </top>
          <center>
-            <HTMLEditor fx:id="entryTextArea" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" onKeyReleased="#onKeyReleased" prefHeight="200.0" prefWidth="506.0" BorderPane.alignment="CENTER" />
+            <HTMLEditor fx:id="entryTextArea" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" onKeyReleased="#onKeyReleased" prefHeight="750.0" prefWidth="750.0" BorderPane.alignment="CENTER" />
          </center>
+         <bottom>
+            <Pane prefHeight="0.0" prefWidth="750.0" BorderPane.alignment="CENTER" />
+         </bottom>
       </BorderPane>
    </children>
 </AnchorPane>
