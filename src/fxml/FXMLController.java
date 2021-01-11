@@ -300,7 +300,12 @@ public class FXMLController {
                 }
 
                 if(saveType != SaveType.VERSION) {
-                    saveMap.put(saveType, stateMaps.get(saveType));
+                    if(saveType == SaveType.ENTRY) {
+                        saveMap.put(saveType, encryptEntries(entryMap));
+                    }
+                    else {
+                        saveMap.put(saveType, stateMaps.get(saveType));
+                    }
                 }
             }
 
@@ -447,12 +452,17 @@ public class FXMLController {
         SecretKey tmp = null;
         SecretKeyFactory factory = null;
         KeySpec spec = null;
+        Cipher cipher = null;
+
+        Map<LocalDate, Entry<byte[], byte[]>> loadedEntryMap = null;
+        Iterator<Entry<LocalDate, Entry<byte[], byte[]>>> it = null;
 
         try {
             factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
             spec = new PBEKeySpec(key.toCharArray(), salt, 65536, 256);
             tmp = factory.generateSecret(spec);
             secret = new SecretKeySpec(tmp.getEncoded(), "AES");
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         } catch (NoSuchAlgorithmException e) {
             // TODO Auto-generated catch block
             entryTextArea.setHtmlText("NoSuchAlgorithmException caught in populateSavedChangesFromOld()\n" + e.getStackTrace());
@@ -460,6 +470,10 @@ public class FXMLController {
         } catch (InvalidKeySpecException e) {
             // TODO Auto-generated catch block
             entryTextArea.setHtmlText("InvalidKeySpecException caught in populateSavedChangesFromOld()\n" + e.getStackTrace());
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            // TODO Auto-generated catch block
+            entryTextArea.setHtmlText("NoSuchPaddingException caught in populateSavedChangesFromOld()\n" + e.getStackTrace());
             e.printStackTrace();
         }
 
@@ -480,6 +494,7 @@ public class FXMLController {
                 if (entry.getValue() instanceof Map) {
                     SaveType saveType = entry.getKey();
                     HashMap<LocalDate, String>  readMap = (HashMap<LocalDate, String>) entry.getValue();
+                    Map<LocalDate, Entry<byte[], byte[]>> encryptedReadMap;
                    switch(saveType) {
                        case DATE_HBOX_COLOR:
                            dateHBoxColorMap = readMap;
@@ -488,8 +503,44 @@ public class FXMLController {
                            datePickerColorMap = readMap;
                            break;
                        case ENTRY:
-                           entryMap = readMap;
-                           break;
+                           try {
+                               entryMap = new HashMap<LocalDate, String>();
+                               encryptedReadMap = (Map<LocalDate, Entry<byte[], byte[]>>) entry.getValue();
+                               it = encryptedReadMap.entrySet().iterator();
+                               while (it.hasNext()) {
+                                   Map.Entry<LocalDate, Entry<byte[], byte[]>> pair = it.next();
+                                   cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+                                   cipher.init(Cipher.DECRYPT_MODE, secret, new IvParameterSpec(pair.getValue().getKey()));
+                                   String plaintext = new String(cipher.doFinal(pair.getValue().getValue()), "UTF-8");
+                                   entryMap.put(pair.getKey(), plaintext);
+                                   System.out.println("Plaintext: " + plaintext);
+                               }
+                           } catch (NoSuchAlgorithmException e) {
+                               // TODO Auto-generated catch block
+                               entryTextArea.setHtmlText("NoSuchAlgorithmException caught in populateSavedChangesFromOld()\n" + e.getStackTrace());
+                               e.printStackTrace();
+                           } catch (NoSuchPaddingException e) {
+                               // TODO Auto-generated catch block
+                               entryTextArea.setHtmlText("NoSuchPaddingException caught in populateSavedChangesFromOld()\n" + e.getStackTrace());
+                               e.printStackTrace();
+                           } catch (InvalidKeyException e) {
+                               // TODO Auto-generated catch block
+                               entryTextArea.setHtmlText("InvalidKeyException caught in populateSavedChangesFromOld()\n" + e.getStackTrace());
+                               e.printStackTrace();
+                           } catch (InvalidAlgorithmParameterException e) {
+                               // TODO Auto-generated catch block
+                               entryTextArea.setHtmlText("InvalidAlgorithmParameterException caught in populateSavedChangesFromOld()\n" + e.getStackTrace());
+                               e.printStackTrace();
+                           } catch (IllegalBlockSizeException e) {
+                               // TODO Auto-generated catch block
+                               entryTextArea.setHtmlText("IllegalBlockSizeException caught in populateSavedChangesFromOld()\n" + e.getStackTrace());
+                               e.printStackTrace();
+                           } catch (BadPaddingException e) {
+                               // TODO Auto-generated catch block
+                               entryTextArea.setHtmlText("BadPaddingException caught in populateSavedChangesFromOld()\n" + e.getStackTrace());
+                               e.printStackTrace();
+                           }
+                    break;
                        case ENTRY_TEXT_AREA_COLOR:
                            entryTextAreaColorMap = readMap;
                            break;
@@ -517,16 +568,14 @@ public class FXMLController {
                 entryTextAreaColorMap = (Map<LocalDate, String>) is.readObject();
                 is.skip(8);
 
-                Map<LocalDate, Entry<byte[], byte[]>> loadedEntryMap = (Map<LocalDate, Entry<byte[], byte[]>>) is.readObject();
-
-                Iterator<Entry<LocalDate, Entry<byte[], byte[]>>> it = loadedEntryMap.entrySet().iterator();
+                loadedEntryMap = (Map<LocalDate, Entry<byte[], byte[]>>) is.readObject();
+                it = loadedEntryMap.entrySet().iterator();
 
                 while (it.hasNext()) {
                     Map.Entry<LocalDate, Entry<byte[], byte[]>> pair = it.next();
 
                     try {
-
-                        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+                        cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
                         cipher.init(Cipher.DECRYPT_MODE, secret, new IvParameterSpec(pair.getValue().getKey()));
                         String plaintext = new String(cipher.doFinal(pair.getValue().getValue()), "UTF-8");
                         entryMap.put(pair.getKey(), plaintext);
@@ -658,7 +707,11 @@ public class FXMLController {
         Alert alert = new Alert(AlertType.INFORMATION, "Changelog", ButtonType.OK);
         alert.setHeaderText("Version History");
         alert.setTitle("Changelog");
-        alert.setContentText("Version 1.0.2 \n" +
+        alert.setContentText("Version 1.0.3 \n" +
+                             "Restructured Save Files \n" +
+                             "Minor UI Updates \n" +
+                             "***************************************************\n\n" +
+                             "Version 1.0.2 \n" +
                              "Added Custom Icon \n" +
                              "Added Password Dialog (Hidden Password Entry) \n" +
                              "Added Changelog \n" +
