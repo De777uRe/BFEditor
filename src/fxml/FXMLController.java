@@ -579,62 +579,6 @@ public class FXMLController {
         }
     }
 
-
-    @FXML
-    private void invokeLoadItemOld() {
-        System.out.println("Invoked Load Item");
-
-        System.out.println("Loading File");
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Load Encrypted Journal");
-        File loadedFilePath = fileChooser.showOpenDialog((Stage) anchorPane.getScene().getWindow());
-
-        if (loadedFilePath != null) {
-            try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(loadedFilePath))) {
-//                populateSavedChangesFromOld(is);
-
-                // TODO Trigger Event
-                System.out.println("LOADING DATE: " + date);
-                datePicker.setValue(LocalDate.now());
-                entryTextArea.setHtmlText(entryMap.get(date));
-                if (menuColorMap.get(date) != null)
-                    bfMenu.setStyle("-fx-background-color: #" + menuColorMap.get(date));
-                else
-                    bfMenu.setStyle(null);
-
-                if (dateHBoxColorMap.get(date) != null)
-                    dateHBox.setStyle("-fx-background-color: #" + dateHBoxColorMap.get(date));
-                else
-                    dateHBox.setStyle(null);
-
-                if (datePickerColorMap.get(date) != null) {
-                    System.out.println("Loading a style from file");
-                    datePicker.setStyle("-fx-control-inner-background: #" + datePickerColorMap.get(date));
-//                    datePicker.getDayCellFactory().call(datePicker);
-                }
-                else {
-                    datePicker.setStyle(null);
-                    datePicker.setBackground(defaultBackground);
-                    datePicker.setStyle(defaultStyle);
-                }
-
-                if (entryTextAreaColorMap.get(date) != null)
-                    entryTextArea.setStyle("-fx-control-inner-background: #" + entryTextAreaColorMap.get(date));
-                else
-                    entryTextArea.setStyle(null);
-                defaultSavePath = loadedFilePath;
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                entryTextArea.setHtmlText("FileNotFoundException caught in invokeLoadItem()" + "\n" + e.getStackTrace());
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                entryTextArea.setHtmlText("IOException caught in invokeLoadItem()" + "\n" + e.getStackTrace());
-                e.printStackTrace();
-            }
-        }
-    }
-
     @FXML
     private void invokeMenuBarItem() {
     	System.out.println("Invoked Edit -> Menu Bar Item");
