@@ -40,23 +40,15 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.DateCell;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -210,6 +202,9 @@ public class FXMLController {
 
         WebView webview = (WebView) entryTextArea.lookup("WebView");
         GridPane.setVgrow(webview, Priority.ALWAYS);
+
+        // Save Shortcut
+        saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
     }
 
     @FXML
@@ -246,6 +241,9 @@ public class FXMLController {
         }
 
         System.out.println("Overwriting File: " + defaultSavePath);
+
+        Alert saveAlert = new Alert(AlertType.INFORMATION, "Journal Saved!", ButtonType.OK);
+        saveAlert.showAndWait();
     }
 
     @FXML
